@@ -290,10 +290,10 @@ class Builder(object):
             capture=True).strip().splitlines()
         platform = sysconfig.get_platform()
         return {
-            'name': rv[0],
-            'version': rv[1],
+            'name': str(rv[0].decode('utf-8')),
+            'version': str(rv[1].decode('utf-8')),
             'platform': platform,
-            'ident': rv[2],
+            'ident': str(rv[2].decode('utf-8'))
         }
 
     def copy_file(self, filename, target):
@@ -349,15 +349,14 @@ class Builder(object):
         fn = os.path.join(scratchpad, 'install.sh')
 
         with open(install_script_path) as f:
-            postinstall = f.read().rstrip().decode('utf-8')
+            postinstall = f.read().rstrip()
 
         with open(fn, 'w') as f:
             f.write((INSTALLER % dict(
                 name=pkginfo['ident'],
                 pkg=pkginfo['name'],
                 python=os.path.basename(self.python),
-                postinstall=postinstall,
-            )).encode('utf-8'))
+                postinstall=postinstall)))
         os.chmod(fn, int('0100755', 8))
 
     def put_meta_info(self, scratchpad, pkginfo):
@@ -366,11 +365,11 @@ class Builder(object):
             json.dump(pkginfo, f, indent=2)
             f.write('\n')
         with open(os.path.join(scratchpad, 'VERSION'), 'w') as f:
-            f.write(pkginfo['version'].encode('utf-8') + '\n')
+            f.write(pkginfo['version'] + '\n')
         with open(os.path.join(scratchpad, 'PLATFORM'), 'w') as f:
-            f.write(pkginfo['platform'].encode('utf-8') + '\n')
+            f.write(pkginfo['platform'] + '\n')
         with open(os.path.join(scratchpad, 'PACKAGE'), 'w') as f:
-            f.write(pkginfo['name'].encode('utf-8') + '\n')
+            f.write(pkginfo['name'] + '\n')
 
     def create_archive(self, scratchpad, pkginfo, format):
         base = pkginfo['ident'] + '-' + pkginfo['platform']
