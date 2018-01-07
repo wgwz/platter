@@ -356,7 +356,7 @@ class Builder(object):
                 python=os.path.basename(self.python),
                 postinstall=postinstall,
             )).encode('utf-8'))
-        os.chmod(fn, 0100755)
+        os.chmod(fn, int('0100755', 8))
 
     def put_meta_info(self, scratchpad, pkginfo):
         self.log.info('Placing meta information')
